@@ -1,0 +1,27 @@
+{
+  "name": "cryptocurency-price-checker",
+  "version": "0.0.1",
+  "description": "checks price of coins for different countries and finds differences.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node ./app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rajexcited/cryptocurency-price-checker.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "axios": "0.17.x",
+    "cors": "2.7.1",
+    "errorhandler": "1.4.3",
+    "express": "4.13.4",
+    "express-urlrewrite": "1.2.0",
+    "jsontoxml": "0.1.0",
+    "morgan": "1.x.x",
+    "node-cache": "4.1.x",
+    "object-hash": "1.1.x"
+  },
+  "devDependencies": {
+  }
+}
