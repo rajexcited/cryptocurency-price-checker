@@ -15,6 +15,7 @@ app.use(morgan('combined'));
 /*******
   Routes can be added here.
   ******/
+app.use(require('./routes'));
 /// START-error handlers
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {
