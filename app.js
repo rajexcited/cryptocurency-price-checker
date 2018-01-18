@@ -7,7 +7,7 @@ var app,
     morgan = require('morgan'), 
     isDevelopment = (process.env.NODE_ENV === 'development');
 
-console.log('node env', process.env.NODE_ENV);
+console.log('test node env', process.env.NODE_ENV);
 // Create global app object
 app = express();
 app.use(cors());
