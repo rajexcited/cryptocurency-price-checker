@@ -5,7 +5,6 @@ var app,
     express = require('express'),
     cors = require('cors'),
     morgan = require('morgan'), 
-    produceXml = require('./lib/xml-producer'), 
     isDevelopment = (process.env.NODE_ENV === 'development');
 
 console.log('test node env', process.env.NODE_ENV);
@@ -13,7 +12,6 @@ console.log('test node env', process.env.NODE_ENV);
 app = express();
 app.use(cors());
 app.use(morgan('combined'));
-app.use(produceXml());
 /*******
   Routes can be added here.
   ******/
