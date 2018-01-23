@@ -1,5 +1,6 @@
 var router = require('express').Router({
-		mergeParams: true
+		mergeParams: true,
+		strict: true
 	}),
 	producer = require('../../lib/producer-xml-json'),
 	diffFinder = require('./difference-finder');
