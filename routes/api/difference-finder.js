@@ -13,7 +13,6 @@ function getDifference(usdCrypto, inrCrypto, foriegnRate, howMuchUSD, additional
 	return {
 		coinsFee: fiatValueComputer(additionalPercentFees, usCoins),
 		usdFee: fiatValueComputer(additionalPercentFees, howMuchUSD),
-		percentFee: fiatValueComputer(additionalPercentFees, percentage),
 		coins: (usCoins - inrCoins),
 		usd: savedUsd,
 		percent: percentage
@@ -29,22 +28,24 @@ function getTickerRespose(usdCoin, inrCoin, foriegnRate, howMuchUSD, tickerId) {
 	return {
 		"coin-id": tickerId,
 		"coin-rate": {
-			"USD-exchange": usdCoin.usdPerCoin.toFixed(2),
-			"INR-exchange": inrCoin.inrPerCoin.toFixed(2),
-			"exchange-names": {
-				"US": usdCoin.exchangeName,
-				"IN": inrCoin.exchangeName
+			"USD": {
+				"exchange-names": usdCoin.exchangeName,
+				"price": usdCoin.usdPerCoin.toFixed(2)
+			},
+			"INR": {
+				"exchange-names": inrCoin.exchangeName,
+				"price": inrCoin.inrPerCoin.toFixed(2),
+				"coins": (howMuchUSD * foriegnRate / inrCoin.inrPerCoin).toFixed(7)
 			},
 			"info": "this is including fees charged (trading, deposit, withdrawal) by USA and India exchanges."
 		},
 		"additional-fees": {
 			"percentage": additionalPercentFees.toFixed(2),
 			"fiat-usd": diff.usdFee.toFixed(2),
-			"fiat-coin": diff.coinsFee.toFixed(2),
+			"fiat-coin": diff.coinsFee.toFixed(7),
 			"info": "maintainance cost, server security cost, loan interest charged, tax,  other unknown cost"
 		},
 		"difference": {
-			"info": "positive = profit, negative = loss;\t\t computed for given USD considering foriegn exchange rate.;\t",
 			"without-fees": {
 				"by-coins": diff.coins.toFixed(7),
 				"by-USD": diff.usd.toFixed(2),
@@ -53,12 +54,12 @@ function getTickerRespose(usdCoin, inrCoin, foriegnRate, howMuchUSD, tickerId) {
 			"with-fees": {
 				"by-coins": (diff.coins - diff.coinsFee).toFixed(7),
 				"by-USD": (diff.usd - diff.usdFee).toFixed(2),
-				"by-percentage": (diff.percent - diff.percentFee).toFixed(2),
-			}
+				"by-percentage": (diff.percent - additionalPercentFees).toFixed(2)
+			},
+			"info": "positive = profit, negative = loss;\t\t computed for given USD considering foriegn exchange rate.;\t"
 		}
 	};
 }
-
 
 module.exports = function findDifferences(howMuchUSD) {
 	var promises = [];
@@ -71,17 +72,21 @@ module.exports = function findDifferences(howMuchUSD) {
 		var foriegnRate = responses[0],
 			tickerData;
 		tickerData = helperData.tickers.map(function(tickerId) {
-			return getTickerRespose(responses[1][tickerId], responses[2][tickerId], foriegnRate, howMuchUSD, tickerId);
+			return {
+				"coin": getTickerRespose(responses[1][tickerId], responses[2][tickerId], foriegnRate, howMuchUSD, tickerId)
+			};
+		}).sort(function(a, b) {
+			return Number(b.coin.difference['without-fees']['by-USD']) - Number(a.coin.difference['without-fees']['by-USD']);
 		});
 
 		return {
-			"difference": {
+			"rates": {
 				"foreign-price": {
 					"INR-rate-based-USD": foriegnRate.toFixed(2),
 					"USD-amount": howMuchUSD.toFixed(2),
 					"INR-amount": (howMuchUSD * foriegnRate).toFixed(2)
 				},
-				"all-tickers": tickerData
+				"coin-list": tickerData
 			}
 		};
 	});

@@ -17,7 +17,7 @@
     "cors": "2.7.1",
     "express": "4.13.4",
     "express-urlrewrite": "1.2.0",
-    "jsontoxml": "0.1.0",
+    "json2xml": "0.1.x",
     "morgan": "1.x.x",
     "node-cache": "4.1.x",
     "object-hash": "1.1.x",

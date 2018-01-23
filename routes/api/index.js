@@ -4,15 +4,28 @@ var router = require('express').Router({
 	producer = require('../../lib/producer-xml-json'),
 	diffFinder = require('./difference-finder');
 
+function getBestDifference(howMuchUSD) {
+	return diffFinder(howMuchUSD).then(function(response) {
+		return {
+			"rates": {
+				"foreign-price": response.rates['foreign-price'],
+				"best-coin-rate": response.rates['coin-list'][0]
+			}
+		};
+	});
+}
 
-function exchangehandle(req, res, next) {
+function exchangeHandle(getDiffFn, req, res, next) {
 	var toXmlOrJson = this.bind(null, res),
 		howMuchUSD = Number(req.params.howMuchUSD);
 
-	diffFinder(howMuchUSD).then(toXmlOrJson).catch(next);
+	getDiffFn(howMuchUSD).then(toXmlOrJson).catch(next);
 }
 
-router.get('/difference/usd/:howMuchUSD/exchange', exchangehandle.bind(producer.toXML));
-router.get('/difference/usd/:howMuchUSD/exchange.json', exchangehandle.bind(producer.toJSON));
+router.get('/difference/usd/:howMuchUSD/exchange', exchangeHandle.bind(producer.toXML, diffFinder));
+router.get('/difference/usd/:howMuchUSD/exchange.json', exchangeHandle.bind(producer.toJSON, diffFinder));
+
+router.get('/difference/usd/:howMuchUSD/exchange/best', exchangeHandle.bind(producer.toXML, getBestDifference));
+router.get('/difference/usd/:howMuchUSD/exchange/best.json', exchangeHandle.bind(producer.toJSON, getBestDifference));
 
 module.exports = router;
