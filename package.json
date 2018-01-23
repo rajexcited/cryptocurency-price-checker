@@ -4,6 +4,7 @@
   "description": "checks price of coins for different countries and finds differences.",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
     "dev": "set NODE_ENV=development&&node ./app.js"
   },
   "repository": {
