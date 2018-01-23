@@ -26,13 +26,13 @@ function getTickerRespose(usdCoin, inrCoin, foriegnRate, howMuchUSD, tickerId) {
 	diff = getDifference(usdCoin, inrCoin, foriegnRate, howMuchUSD, additionalPercentFees);
 
 	return {
-		"coin-id": tickerId,
+		"coin-id": tickerId.toUpperCase(),
 		"coin-rate": {
-			"USD": {
+			"usd": {
 				"exchange-names": usdCoin.exchangeName,
 				"price": usdCoin.usdPerCoin.toFixed(2)
 			},
-			"INR": {
+			"inr": {
 				"exchange-names": inrCoin.exchangeName,
 				"price": inrCoin.inrPerCoin.toFixed(2),
 				"coins": (howMuchUSD * foriegnRate / inrCoin.inrPerCoin).toFixed(7)
@@ -48,12 +48,12 @@ function getTickerRespose(usdCoin, inrCoin, foriegnRate, howMuchUSD, tickerId) {
 		"difference": {
 			"without-fees": {
 				"by-coins": diff.coins.toFixed(7),
-				"by-USD": diff.usd.toFixed(2),
+				"by-usd": diff.usd.toFixed(2),
 				"by-percentage": diff.percent.toFixed(2)
 			},
 			"with-fees": {
 				"by-coins": (diff.coins - diff.coinsFee).toFixed(7),
-				"by-USD": (diff.usd - diff.usdFee).toFixed(2),
+				"by-usd": (diff.usd - diff.usdFee).toFixed(2),
 				"by-percentage": (diff.percent - additionalPercentFees).toFixed(2)
 			},
 			"info": "positive = profit, negative = loss;\t\t computed for given USD considering foriegn exchange rate.;\t"
@@ -82,9 +82,9 @@ module.exports = function findDifferences(howMuchUSD) {
 		return {
 			"rates": {
 				"foreign-price": {
-					"INR-rate-based-USD": foriegnRate.toFixed(2),
-					"USD-amount": howMuchUSD.toFixed(2),
-					"INR-amount": (howMuchUSD * foriegnRate).toFixed(2)
+					"inr-rate-based-usd": foriegnRate.toFixed(2),
+					"usd-amount": howMuchUSD.toFixed(2),
+					"inr-amount": (howMuchUSD * foriegnRate).toFixed(2)
 				},
 				"coin-list": tickerData
 			}
