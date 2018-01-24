@@ -1,32 +1,60 @@
 var router = require('express').Router({
 		mergeParams: true,
-		strict: true
+		strict: true,
+		caseSensitive: true
 	}),
 	producer = require('../../lib/producer-xml-json'),
 	diffFinder = require('./difference-finder');
 
-function getBestDifference(howMuchUSD) {
-	return diffFinder(howMuchUSD).then(function(response) {
-		return {
-			"rates": {
-				"foreign-price": response.rates['foreign-price'],
-				"best-coin-rate": response.rates['coin-list'][0]
+function highestExchangeHandler(req, res, next) {
+	var response = res.data;
+	res.data = {
+		"rates": {
+			"foreign-price": response.rates['foreign-price'],
+			"best-coin-rate": response.rates['coin-list'][0]
+		}
+	};
+	next();
+}
+
+function showMeHandler(req, res, next) {
+	var response = res.data,
+		showMeId = req.params.showMeId;
+
+	res.data = {
+		"rates": {
+			"foreign-price": response.rates['foreign-price']
+		}
+	};
+	if (showMeId === 'profits') {
+		res.data.rates['best-coin-rate'] = {
+			"coin": {
+				"coin-id": response.rates['best-coin-rate'].coin['coin-id'],
+				"profit": {
+					"without-fees": response.rates['best-coin-rate'].coin.difference['without-fees'],
+					"info": response.rates['best-coin-rate'].coin.difference.info
+				}
 			}
 		};
-	});
+	}
+
+	next();
 }
 
-function exchangeHandle(getDiffFn, req, res, next) {
-	var toXmlOrJson = this.bind(null, res),
-		howMuchUSD = Number(req.params.howMuchUSD);
+router.param('howMuchUSD', function(req, res, next, usdValue) {
+	var howMuchUSD = Number(usdValue);
+	diffFinder(howMuchUSD).then(function(response) {
+		res.data = response;
+		next();
+	}).catch(next);
+});
 
-	getDiffFn(howMuchUSD).then(toXmlOrJson).catch(next);
-}
+router.get('/difference/usd/:howMuchUSD/exchange', producer.toXML);
+router.get('/difference/usd/:howMuchUSD/exchange.json', producer.toJSON);
 
-router.get('/difference/usd/:howMuchUSD/exchange', exchangeHandle.bind(producer.toXML, diffFinder));
-router.get('/difference/usd/:howMuchUSD/exchange.json', exchangeHandle.bind(producer.toJSON, diffFinder));
+router.get('/difference/usd/:howMuchUSD/exchange/profit/highest', highestExchangeHandler, producer.toXML);
+router.get('/difference/usd/:howMuchUSD/exchange/profit/highest.json', highestExchangeHandler, producer.toJSON);
 
-router.get('/difference/usd/:howMuchUSD/exchange/best', exchangeHandle.bind(producer.toXML, getBestDifference));
-router.get('/difference/usd/:howMuchUSD/exchange/best.json', exchangeHandle.bind(producer.toJSON, getBestDifference));
+router.get('/difference/usd/:howMuchUSD/exchange/profit/highest/showme/:showMeId', highestExchangeHandler, showMeHandler, producer.toXML);
 
 module.exports = router;
