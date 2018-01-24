@@ -21,21 +21,23 @@ function showMeHandler(req, res, next) {
 	var response = res.data,
 		showMeId = req.params.showMeId;
 
-	res.data = {
-		"rates": {
-			"foreign-price": response.rates['foreign-price']
-		}
-	};
 	if (showMeId === 'profits') {
-		res.data.rates['best-coin-rate'] = {
-			"coin": {
-				"coin-id": response.rates['best-coin-rate'].coin['coin-id'],
-				"profit": {
-					"without-fees": response.rates['best-coin-rate'].coin.difference['without-fees'],
-					"info": response.rates['best-coin-rate'].coin.difference.info
+		res.data = {
+			"rates": {
+				"foreign-price": response.rates['foreign-price'],
+				'best-coin-rate': {
+					"coin": {
+						"coin-id": response.rates['best-coin-rate'].coin['coin-id'],
+						"profit": {
+							"without-fees": response.rates['best-coin-rate'].coin.difference['without-fees'],
+							"info": response.rates['best-coin-rate'].coin.difference.info
+						}
+					}
 				}
 			}
 		};
+	} else {
+		next('unknown error');
 	}
 
 	next();
@@ -43,10 +45,14 @@ function showMeHandler(req, res, next) {
 
 router.param('howMuchUSD', function(req, res, next, usdValue) {
 	var howMuchUSD = Number(usdValue);
-	diffFinder(howMuchUSD).then(function(response) {
-		res.data = response;
-		next();
-	}).catch(next);
+	if (isNaN(howMuchUSD)) {
+		next('incorrect usd value');
+	} else {
+		diffFinder(howMuchUSD).then(function(response) {
+			res.data = response;
+			next();
+		}).catch(next);
+	}
 });
 
 router.get('/difference/usd/:howMuchUSD/exchange', producer.toXML);

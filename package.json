@@ -5,7 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "dev": "set NODE_ENV=development&&node ./app.js"
+    "dev": "set NODE_ENV=development&&node ./app.js",
+    "record-profit": ""
   },
   "repository": {
     "type": "git",
