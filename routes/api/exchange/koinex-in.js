@@ -5,7 +5,7 @@ var caxios = require('../../../lib/caxios')(),
 function getTickerPrice() {
 	return caxios({method: 'get', url: 'https://koinex.in/api/ticker', ttl: 60})
 		.then(function (response) {
-			return response.data.prices;
+			return response.data.prices.inr;
 		});
 }
 
