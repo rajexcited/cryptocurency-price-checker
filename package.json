@@ -1,6 +1,6 @@
 {
   "name": "cryptocurency-price-checker",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "checks price of coins for different countries and finds differences.",
   "main": "app.js",
   "scripts": {
