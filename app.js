@@ -24,8 +24,9 @@ app.use(function(req, res, next) {
 
 app.use(function(err, req, res, next) {
   var statusCode = err.status || 500,
-      msg = isDevelopment ? err.stack : 'Something broke!';
-  console.error(err.stack);
+      errMsg = err.stack === undefined ? err : 'Runtime error:';
+      msg = errMsg + ' \n ' + (isDevelopment ? err.stack : 'Something broke!');
+  console.error('error serving route: ', err);
   res.status(statusCode).send(msg);
 });
 /// END-error handlers
