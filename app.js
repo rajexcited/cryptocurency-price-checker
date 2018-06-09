@@ -19,10 +19,9 @@ app.use(require('./routes'));
 /// START-error handlers
 /// catch 404 and forward to error handler
 app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+  res.redirect('/list-of-links');
 });
+
 app.use(function(err, req, res, next) {
   var statusCode = err.status || 500,
       msg = isDevelopment ? err.stack : 'Something broke!';
