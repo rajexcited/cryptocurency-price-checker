@@ -4,7 +4,7 @@ var axios = require('axios'),
 	fiatValueComputer = require('../../../lib/fiat-value');
 
 function getTickerPrice(tickerId) {
-	return caxios({method: 'get', url: 'https://api.gdax.com/products/'+tickerId.toLowerCase()+'-usd/ticker', ttl: 60})
+	return caxios({method: 'get', url: 'https://api.gdax.com/products/'+tickerId.toLowerCase()+'-usd/ticker', ttl: 15})
 		.then(function (response) {
 			return response.data.price;
 		});
