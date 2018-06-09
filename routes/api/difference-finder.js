@@ -69,14 +69,15 @@ module.exports = function findDifferences(howMuchUSD) {
 	promises.push(coinPricer('koinex'));
 
 	return axios.all(promises).then(function(responses) {
-		var foriegnRate = responses[0],
-			tickerData;
+		var tickerData,
+		    foriegnRate = responses[0];
+		
 		tickerData = helperData.tickers.map(function(tickerId) {
 			return {
 				"coin": getTickerRespose(responses[1][tickerId], responses[2][tickerId], foriegnRate, howMuchUSD, tickerId)
 			};
 		}).sort(function(a, b) {
-			return Number(b.coin.difference['without-fees']['by-USD']) - Number(a.coin.difference['without-fees']['by-USD']);
+			return Number(b.coin.difference['without-fees']['by-usd']) - Number(a.coin.difference['without-fees']['by-usd']);
 		});
 
 		return {
