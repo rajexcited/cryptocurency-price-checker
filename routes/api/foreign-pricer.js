@@ -1,16 +1,16 @@
 var caxios = require('../../lib/caxios')();
 
-function getForiegnRate(symbol) {
+function getForiegnRate(symbol, base) {
 	var params = {
-		base: 'USD', 
-		symbols: symbol
+		access_key: 'd5ad69c8d915b5f426666ff72969e73a',
+		symbols: symbol.concat(',', base)
 	};
-	return caxios({method: 'get', url: 'https://api.fixer.io/latest', params: params, ttl: 300})
+	return caxios({method: 'get', url: 'http://data.fixer.io/api/latest', params: params, ttl: 300})
 		.then(function (response) {
-			return response.data.rates[symbol];
+			return response.data.rates[symbol]/response.data.rates[base]
 		});
 }
 
 module.exports = function callForeignPricer() {
-	return getForiegnRate('INR');
+	return getForiegnRate('INR', 'USD');
 }
