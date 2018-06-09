@@ -8,8 +8,4 @@ router.use('/list-of-links', function (req, res, next) {
 
 router.use('/api', require('./api'));
 
-router.use('/', function (req, res, next) {
-	res.sendFile(file_path);
-});
-
 module.exports = router;
